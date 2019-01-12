@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import classes from './ContactData.css'
@@ -46,7 +47,8 @@ class ContactData extends Component {
                 validation: {
                     required: true,
                     minLength: 5,
-                    maxLength: 5
+                    maxLength: 5,
+                    isNumeric: true
                 },
                 valid: false,
                 touched: false
@@ -68,11 +70,12 @@ class ContactData extends Component {
                 elementType: 'input',
                 elementConfig: {
                     type: 'email',
-                    placeholder: 'Your E-mail'
+                    placeholder: 'Your E-Mail'
                 },
                 value: '',
                 validation: {
-                    required: true
+                    required: true,
+                    isEmail: true
                 },
                 valid: false,
                 touched: false
@@ -88,10 +91,10 @@ class ContactData extends Component {
                 value: 'fastest',
                 validation: {},  // used to make validation of all fields treated equally; won't fail on not having this property set
                 valid: true
-            },
+            }
         },
         formIsValid: false
-    };
+    }
 
     checkValidity(value, rules) {
         let isValid = true;
@@ -124,23 +127,28 @@ class ContactData extends Component {
         return isValid;
     }
 
-    inputChangeHandler = (event, inputIdentifier) => {
-        const updatedForm = {...this.state.orderForm};
-        const updatedFormElement = {...updatedForm[inputIdentifier]}; //deep cloning
+    inputChangedHandler = (event, inputIdentifier) => {
+        const updatedOrderForm = {
+            ...this.state.orderForm
+        };
+        const updatedFormElement = { 
+            ...updatedOrderForm[inputIdentifier]
+        };
         updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = ContactData.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
         updatedFormElement.touched = true;
-        updatedForm[inputIdentifier] = updatedFormElement;
+        updatedOrderForm[inputIdentifier] = updatedFormElement;
+        
         let formIsValid = true;
-        for (let inputIdentifier in updatedForm) {
-            formIsValid = updatedForm[inputIdentifier].valid && formIsValid;
+        for (let inputIdentifier in updatedOrderForm) {
+            formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
         }
-        console.log(updatedFormElement);
-        this.setState({orderForm: updatedForm, formIsValid: formIsValid});
-    };
+        this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
+    }
 
-    orderHandler = (event) => {
+    orderHandler = ( event ) => {
         event.preventDefault();
+  
         const formData = {};
         for (let formElementIdentifier in this.state.orderForm) {
             formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
@@ -150,22 +158,22 @@ class ContactData extends Component {
             price: this.props.price,  // calculate price on the server in real world apps
             orderData: formData
         };
+
         this.props.onOrderBurger(order, this.props.token);
     };
 
-    render() {
+    render () {
         const formElementsArray = [];
         for (let key in this.state.orderForm) {
             formElementsArray.push({
                 id: key,
                 config: this.state.orderForm[key]
-            })
+            });
         }
-
         let form = (
             <form onSubmit={this.orderHandler}>
                 {formElementsArray.map(formElement => (
-                    <Input
+                    <Input 
                         key={formElement.id}
                         elementType={formElement.config.elementType}
                         elementConfig={formElement.config.elementConfig}
@@ -173,16 +181,13 @@ class ContactData extends Component {
                         invalid={!formElement.config.valid}
                         shouldValidate={formElement.config.validation}
                         touched={formElement.config.touched}
-                        changed={(event) => this.inputChangeHandler(event, formElement.id)}/>
+                        changed={(event) => this.inputChangedHandler(event, formElement.id)} />
                 ))}
-                <Button
-                    btnType="Success"
-                    disabled={!this.state.formIsValid}
-                    clicked={this.orderHandler}>ORDER</Button>
+                <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
             </form>
         );
-        if (this.props.loading) {
-            form = <Spinner/>;
+        if ( this.props.loading ) {
+            form = <Spinner />;
         }
         return (
             <div className={classes.ContactData}>
