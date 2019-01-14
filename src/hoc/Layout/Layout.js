@@ -4,7 +4,6 @@ import Aux from '../Auxx/Auxx';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 import classes from './Layout.css'
-import { isNull } from 'util';
 
 class Layout extends Component {
     state = {
