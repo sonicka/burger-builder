@@ -1,13 +1,14 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
-import classes from './ContactData.css'
+import classes from './ContactData.css';
 import axios from '../../../axios-orders';
 import Input from '../../../components/UI/Input/Input';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index';
+
 class ContactData extends Component {
     state = {
         orderForm: {
@@ -96,6 +97,24 @@ class ContactData extends Component {
         formIsValid: false
     }
 
+    orderHandler = ( event ) => {
+        event.preventDefault();
+  
+        const formData = {};
+        for (let formElementIdentifier in this.state.orderForm) {
+            formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+        }
+        const order = {
+            ingredients: this.props.ings,
+            price: this.props.price,  // calculate price on the server in real world apps
+            orderData: formData,
+            userId: this.props.userId
+        }
+
+        this.props.onOrderBurger(order, this.props.token);
+        
+    }
+
     checkValidity(value, rules) {
         let isValid = true;
         if (!rules) {
@@ -145,23 +164,6 @@ class ContactData extends Component {
         }
         this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
     }
-
-    orderHandler = ( event ) => {
-        event.preventDefault();
-  
-        const formData = {};
-        for (let formElementIdentifier in this.state.orderForm) {
-            formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
-        }
-        const order = {
-            ingredients: this.props.ings,
-            price: this.props.price,  // calculate price on the server in real world apps
-            orderData: formData,
-            userId: this.props.userId,
-        };
-
-        this.props.onOrderBurger(order, this.props.token);
-    };
 
     render () {
         const formElementsArray = [];

@@ -1,40 +1,44 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
 import Aux from '../Auxx/Auxx';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
-import classes from './Layout.css'
+import classes from './Layout.css';
 
 class Layout extends Component {
     state = {
         showSideDrawer: false
-    };
+    }
 
     sideDrawerClosedHandler = () => {
-        this.setState({showSideDrawer: false});
-    };
-
-    sideDrawerHandler = () => {
         // may lead to unexpected behaviour when calling state in set state:
-            // this.setState({showSideDrawer: !this.state.showSideDrawer});
-            // use functional approach instead, passing the prevstate as an argument
-        this.setState((prevState) => {
-           return {showSideDrawer: !prevState.showSideDrawer};
-        });
-    };
+        // this.setState({showSideDrawer: !this.state.showSideDrawer});
+        // use functional approach instead, passing the prevstate as an argument
+        this.setState( { showSideDrawer: false } );
+    }
 
-    render() {
+    // ^ v these two chaged (todo?)
+
+    sideDrawerToggleHandler = () => {
+        this.setState( ( prevState ) => {
+            return { showSideDrawer: !prevState.showSideDrawer };
+        } );
+    }
+
+    render () {
         return (
             <Aux>
-                <Toolbar 
+                <Toolbar
                     isAuth={this.props.isAuthenticated}
-                    drawerTogglerClicked={this.sideDrawerHandler}
-                    />
+                    drawerTogglerClicked={this.sideDrawerToggleHandler} />
                 <SideDrawer
                     isAuth={this.props.isAuthenticated}
                     open={this.state.showSideDrawer}
-                    closed={this.sideDrawerClosedHandler}/>
-                <main className={classes.Content}> {this.props.children} </main>
+                    closed={this.sideDrawerClosedHandler} />
+                <main className={classes.Content}>
+                    {this.props.children}
+                </main>
             </Aux>
         )
     }
@@ -46,4 +50,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(Layout);
+export default connect( mapStateToProps )( Layout );

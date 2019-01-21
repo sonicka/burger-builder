@@ -33,9 +33,9 @@ const authLogout = (state, action) => {
     return updateObject(state, { token: null, userId: null });
 };
 
-const  setAuthRedirectPath = (state, action) => {
+const setAuthRedirectPath = (state, action) => {
     return updateObject(state, { authRedirectPath: action.path });
-};
+}
 
 const reducer = ( state = initialState, action ) => {
     switch ( action.type ) {

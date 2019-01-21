@@ -14,7 +14,7 @@ export const purchaseBurgerFail = ( error ) => {
         type: actionTypes.PURCHASE_BURGER_FAIL,
         error: error,
     };
-};
+}
 
 export const purchaseBurgerStart = () => {
     return {
@@ -26,7 +26,7 @@ export const purchaseBurger = ( orderData, token ) => {
     return dispatch => {
         dispatch( purchaseBurgerStart() );
         axios.post('/orders.json?auth=' + token, orderData) //.json being firebase thing
-        .then( response => {
+            .then( response => {
                 console.log( response.data );
                 dispatch( purchaseBurgerSuccess( response.data.name, orderData ) );
             } )
